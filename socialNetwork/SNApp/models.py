@@ -46,6 +46,7 @@ class Post(models.Model):
     description = models.CharField(max_length=255, blank=True)
     image = models.ImageField()
     views = models.ManyToManyField('User', related_name="post_views", through='UserPostRelation')
+    comments = models.ManyToManyField('Comment', related_name="comments")
 
     def __str__(self):
         return self.title
@@ -63,3 +64,9 @@ class UserPostRelation(models.Model):
     like = models.BooleanField(default=False)
     in_notes = models.BooleanField(default=False)
 
+
+class Comment(models.Model):
+    user = models.ForeignKey('User', related_name="author_comment", on_delete=models.CASCADE)
+    post = models.ForeignKey('Post', related_name="post", on_delete=models.CASCADE)
+    text = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_created=True)
