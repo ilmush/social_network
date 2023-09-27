@@ -9,6 +9,7 @@ class User(models.Model):
         null=True,
         blank=True
     )
+    slug = models.SlugField(max_length=15)
     image = models.ImageField()
     description = models.CharField(max_length=255, blank=True)
     posts = models.ForeignKey('Post', on_delete=models.CASCADE, blank=True)
@@ -42,6 +43,7 @@ class User(models.Model):
 
 class Post(models.Model):
     author = models.ForeignKey('User', related_name="author", on_delete=models.CASCADE)
+    slug = models.SlugField(max_length=15)
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=255, blank=True)
     image = models.ImageField()
@@ -67,6 +69,7 @@ class UserPostRelation(models.Model):
 
 class Comment(models.Model):
     user = models.ForeignKey('User', related_name="author_comment", on_delete=models.CASCADE)
+    slug = models.SlugField(max_length=15)
     post = models.ForeignKey('Post', related_name="post", on_delete=models.CASCADE)
     text = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_created=True)
