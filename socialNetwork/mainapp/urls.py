@@ -28,7 +28,7 @@ urlpatterns = [
 
 router = routers.DefaultRouter()
 router.register(r'api/users', UserViewSet)
-router.register(r'api/post', PostViewSet)
+router.register(r'api/posts', PostViewSet)
 router.register(r'api/comments', CommentViewSet)
 router.register(r'api/followers', FollowViewSet)
 

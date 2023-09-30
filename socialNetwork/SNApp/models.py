@@ -45,12 +45,12 @@ class User(models.Model):
 
 
 class Post(models.Model):
-    author = models.ForeignKey('User', related_name="author", on_delete=models.CASCADE)
+    author = models.ForeignKey(User, related_name="author", on_delete=models.CASCADE)
     slug = models.SlugField(max_length=15, unique=True)
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=255, blank=True)
     image = models.ImageField(blank=True)
-    views = models.ManyToManyField('User', related_name="post_views", through='UserPostRelation')
+    views = models.ManyToManyField(User, related_name="post_views", through='UserPostRelation')
     comments = models.ManyToManyField('Comment', related_name="comments", blank=True)
 
     def __str__(self):
@@ -77,13 +77,22 @@ class UserPostRelation(models.Model):
 
 
 class Comment(models.Model):
-    user = models.ForeignKey('User', related_name="author_comment", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name="author_comment", on_delete=models.CASCADE)
     slug = models.SlugField(max_length=15, unique=True)
-    post = models.ForeignKey('Post', related_name="post", on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, related_name="post", on_delete=models.CASCADE)
     text = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_created=True)
+    likes = models.ManyToManyField(User, related_name="likes_post", through='UserCommentRelation')
 
     def __str__(self):
         return f'Комментарий {self.user} к посту {self.post}'
 
+
+class UserCommentRelation(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
+    like = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'Пользователь {self.user} отреагировал на {self.comment}'
 

@@ -1,3 +1,4 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
@@ -16,12 +17,16 @@ class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     lookup_field = 'slug'
+    filter_backends = [DjangoFilterBackend]
+    filter_fields = ['views']
 
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     lookup_field = 'slug'
+    filter_backends = [DjangoFilterBackend]
+    filter_fields = ['likes']
 
 
 class FollowViewSet(ReadOnlyModelViewSet):
