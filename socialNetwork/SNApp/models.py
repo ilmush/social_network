@@ -10,10 +10,13 @@ class User(models.Model):
         blank=True
     )
     slug = models.SlugField(max_length=15, unique=True)
-    image = models.ImageField()
+    image = models.ImageField(blank=True)
     description = models.CharField(max_length=255, blank=True)
-    posts = models.ForeignKey('Post', on_delete=models.CASCADE, blank=True)
-    followers = models.ManyToManyField('self', through='Follow', related_name='followers_user', symmetrical=False, blank=True)
+    posts = models.ForeignKey('Post', on_delete=models.CASCADE, null=True, blank=True)
+    followers = models.ManyToManyField(
+        'self', through='Follow',
+        related_name='followers_user',
+        symmetrical=False, blank=True)
 
     @property
     def name(self):
@@ -46,9 +49,9 @@ class Post(models.Model):
     slug = models.SlugField(max_length=15, unique=True)
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=255, blank=True)
-    image = models.ImageField()
+    image = models.ImageField(blank=True)
     views = models.ManyToManyField('User', related_name="post_views", through='UserPostRelation')
-    comments = models.ManyToManyField('Comment', related_name="comments")
+    comments = models.ManyToManyField('Comment', related_name="comments", blank=True)
 
     def __str__(self):
         return self.title
@@ -59,12 +62,18 @@ class Follow(models.Model):
     following = models.ForeignKey(User, related_name='follower_set', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f'{self.follower} подписан на {self.following}'
+
 
 class UserPostRelation(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     like = models.BooleanField(default=False)
     in_notes = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'Пользователь {self.user} и пост {self.post}'
 
 
 class Comment(models.Model):
@@ -73,3 +82,8 @@ class Comment(models.Model):
     post = models.ForeignKey('Post', related_name="post", on_delete=models.CASCADE)
     text = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_created=True)
+
+    def __str__(self):
+        return f'Комментарий {self.user} к посту {self.post}'
+
+
