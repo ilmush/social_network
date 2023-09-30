@@ -18,11 +18,21 @@ from django.contrib import admin
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework import routers
 
+from SNApp.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 ]
+
+router = routers.DefaultRouter()
+router.register(r'api/users', UserViewSet)
+router.register(r'api/post', PostViewSet)
+router.register(r'api/comments', CommentViewSet)
+router.register(r'api/followers', FollowViewSet)
+
+urlpatterns += router.urls
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
