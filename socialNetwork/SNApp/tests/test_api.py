@@ -1,3 +1,5 @@
+import json
+
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -19,3 +21,28 @@ class UserApiTestCase(APITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(serializer_data, response.data)
 
+    def test_create(self):
+        self.assertEqual(3, User.objects.all().count())
+        url = reverse('user-list')
+        data = {
+            'slug': 'user4',
+            'description': 'qwerty'
+        }
+        json_data = json.dumps(data)
+        response = self.client.post(url, data=json_data,
+                                    content_type='application/json')
+        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+        self.assertEqual(4, User.objects.all().count())
+
+    def test_update(self):
+        url = reverse('user-detail', args=(self.user_1.slug,))
+        data = {
+            'slug': self.user_1.slug,
+            'description': '123'
+        }
+        json_data = json.dumps(data)
+        response = self.client.put(url, data=json_data,
+                                   content_type='application/json')
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.user_1.refresh_from_db()
+        self.assertEqual('123', self.user_1.description)
