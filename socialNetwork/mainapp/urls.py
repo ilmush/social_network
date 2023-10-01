@@ -23,14 +23,15 @@ from rest_framework import routers
 from SNApp.views import *
 
 router = routers.SimpleRouter()
-router.register(r'posts', PostViewSet)
-router.register(r'users', UserViewSet)
-router.register(r'comments', CommentViewSet)
+
+router.register(r'post', PostViewSet)
+router.register(r'user', UserViewSet)
+router.register(r'comment', CommentViewSet)
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/', include(router.urls)),
+    # path('api/v1/', include(router.urls)),
 ]
 
 
