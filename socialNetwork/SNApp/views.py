@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from SNApp.models import User, Post, Comment, Follow, UserPostRelation
+from SNApp.permissions import IsOwnerOrReadOnly
 from SNApp.serializers import UserSerializer, PostSerializer, CommentSerializer, FollowSerializer, \
     UserPostRelationSerializer
 
@@ -21,18 +22,27 @@ class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     lookup_field = 'slug'
+    permission_classes = [IsAuthenticatedOrReadOnly, ]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filter_fields = ['title']
     ordering_fields = ['views', 'comments']
+
+    def perform_create(self, serializer):
+        serializer.validated_data['owner'] = self.request.user
+        serializer.save()
 
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     lookup_field = 'slug'
-    # permission_classes = [IsAuthenticatedOrReadOnly]
+    # permission_classes = [IsOwnerOrReadOnly]
     filter_backends = [OrderingFilter]
     ordering_fields = ['likes']
+
+    # def perform_create(self, serializer):
+    #     serializer.validated_data['owner'] = self.request.user
+    #     serializer.save()
 
 
 class FollowViewSet(ReadOnlyModelViewSet):

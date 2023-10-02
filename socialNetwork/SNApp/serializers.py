@@ -6,8 +6,9 @@ from SNApp.models import User, Post, Comment, Follow, UserPostRelation
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('slug', 'description')
+        # fields = ('slug', 'description')
         # fields = ('name', 'email', 'id')
+        fields = '__all__'
 
 
 class PostSerializer(serializers.ModelSerializer):

@@ -4,7 +4,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from SNApp.models import User
+from SNApp.models import User, Post
 from SNApp.serializers import UserSerializer
 
 
@@ -29,10 +29,12 @@ class UserApiTestCase(APITestCase):
             'description': 'qwerty'
         }
         json_data = json.dumps(data)
+        self.client.force_login(self.user_1)
         response = self.client.post(url, data=json_data,
                                     content_type='application/json')
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
         self.assertEqual(4, User.objects.all().count())
+        print(User.objects.last().owner)
 
     def test_update(self):
         url = reverse('user-detail', args=(self.user_1.slug,))
@@ -46,3 +48,22 @@ class UserApiTestCase(APITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.user_1.refresh_from_db()
         self.assertEqual('123', self.user_1.description)
+
+
+class PostApiTestCase(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create(slug='user1', description='ilmuhayat')
+        self.post = Post.objects.create(slug='1', title='title')
+
+    def test_create(self):
+        url = reverse('post-list')
+        data = {
+            'slug': '1',
+            'title': 'title'
+        }
+        json_data = json.dumps(data)
+        self.client.force_login(self.user)
+        response = self.client.post(url, data=json_data,
+                                    content_type='application/json')
+        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+        print(Post.objects.last().owner)

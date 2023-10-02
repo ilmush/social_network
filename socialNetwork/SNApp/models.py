@@ -45,7 +45,7 @@ class User(models.Model):
 
 
 class Post(models.Model):
-    author = models.ForeignKey(User, related_name="author", on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, related_name="author", on_delete=models.SET_NULL, null=True)
     slug = models.SlugField(max_length=15, unique=True)
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=255, blank=True)
@@ -77,7 +77,7 @@ class UserPostRelation(models.Model):
 
 
 class Comment(models.Model):
-    user = models.ForeignKey(User, related_name="author_comment", on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, related_name="author_comment", on_delete=models.CASCADE)
     slug = models.SlugField(max_length=15, unique=True)
     post = models.ForeignKey(Post, related_name="post", on_delete=models.CASCADE)
     text = models.CharField(max_length=100)
@@ -85,7 +85,7 @@ class Comment(models.Model):
     likes = models.ManyToManyField(User, related_name="likes_post", through='UserCommentRelation')
 
     def __str__(self):
-        return f'Комментарий {self.user} к посту {self.post}'
+        return f'Комментарий {self.owner} к посту {self.post}'
 
 
 class UserCommentRelation(models.Model):
