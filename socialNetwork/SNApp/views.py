@@ -17,6 +17,10 @@ class ProfileViewSet(viewsets.ModelViewSet):
     # filter_backends = [DjangoFilterBackend]
     # filter_fields = ['name']
 
+    def perform_create(self, serializer):
+        serializer.validated_data['user'] = self.request.user
+        serializer.save()
+
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()

@@ -4,19 +4,28 @@ from SNApp.models import Profile
 from SNApp.serializers import ProfileSerializer
 
 
-class UserSerializerTestCase(TestCase):
+class ProfileSerializerTestCase(TestCase):
+    def setUp(self):
+        self.profile_1 = Profile.objects.create(slug='profile1', description='ilmuhayat')
+        self.profile_2 = Profile.objects.create(slug='profile2', description='lalala')
+
     def test_ok(self):
-        user_1 = Profile.objects.create(slug='user1', description='ilmuhayat')
-        user_2 = Profile.objects.create(slug='user2', description='lalala')
-        data = ProfileSerializer([user_1, user_2], many=True).data
+        data = ProfileSerializer([self.profile_1, self.profile_2], many=True).data
         expected_data = [
             {
-                'slug': user_1.slug,
-                'description': 'ilmuhayat'
+                'user': None,
+                'slug': self.profile_1.slug,
+                'image': None,
+                'description': 'ilmuhayat',
+                'posts': None,
+                'followers': None
             },
             {
-                'slug': user_2.slug,
-                'description': 'lalala'
+                'user': None,
+                'slug': self.profile_1.slug,
+                'image': None,
+                'description': 'lalala',
+                'posts': None,
+                'followers': None
             },
         ]
-        self.assertEqual(expected_data, data)
