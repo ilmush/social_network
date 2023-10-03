@@ -1,11 +1,11 @@
 from rest_framework import serializers
 
-from SNApp.models import User, Post, Comment, Follow, UserPostRelation
+from SNApp.models import Profile, Post, Comment, Follow, UserPostRelation
 
 
-class UserSerializer(serializers.ModelSerializer):
+class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = Profile
         # fields = ('slug', 'description')
         # fields = ('name', 'email', 'id')
         fields = '__all__'

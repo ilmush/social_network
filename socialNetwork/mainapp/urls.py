@@ -26,7 +26,7 @@ from SNApp.views import *
 router = routers.SimpleRouter()
 
 router.register(r'posts', PostViewSet)
-router.register(r'users', UserViewSet)
+router.register(r'profiles', ProfileViewSet)
 router.register(r'comments', CommentViewSet)
 
 

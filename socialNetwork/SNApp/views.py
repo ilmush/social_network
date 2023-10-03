@@ -4,18 +4,18 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
-from SNApp.models import User, Post, Comment, Follow, UserPostRelation
+from SNApp.models import Profile, Post, Comment, Follow, UserPostRelation
 from SNApp.permissions import IsOwnerOrReadOnly
-from SNApp.serializers import UserSerializer, PostSerializer, CommentSerializer, FollowSerializer, \
+from SNApp.serializers import ProfileSerializer, PostSerializer, CommentSerializer, FollowSerializer, \
     UserPostRelationSerializer
 
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+class ProfileViewSet(viewsets.ModelViewSet):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
     lookup_field = 'slug'
-    filter_backends = [DjangoFilterBackend]
-    filter_fields = ['name']
+    # filter_backends = [DjangoFilterBackend]
+    # filter_fields = ['name']
 
 
 class PostViewSet(viewsets.ModelViewSet):
