@@ -6,14 +6,12 @@ from SNApp.models import Profile, Post, Comment, Follow, UserPostRelation
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        # fields = ('image', 'posts', 'followers')
         fields = '__all__'
 
 
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        # fields = ('slug', 'title')
         fields = '__all__'
 
 
@@ -21,7 +19,7 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = '__all__'
-        # fields = ('slug', 'text')
+        # fields = ('owner', 'post', 'created_at', 'likes')
 
 
 class FollowSerializer(serializers.ModelSerializer):

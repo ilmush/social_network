@@ -1,7 +1,8 @@
+from django.contrib.auth.models import User
 from django.test import TestCase
 
-from SNApp.models import Profile, Post
-from SNApp.serializers import ProfileSerializer, PostSerializer
+from SNApp.models import Profile, Post, Comment
+from SNApp.serializers import ProfileSerializer, PostSerializer, CommentSerializer
 
 
 class ProfileSerializerTestCase(TestCase):
@@ -57,4 +58,23 @@ class PostSerializerTestCase(TestCase):
                 'views': None,
                 'comments': None
             },
+        ]
+
+
+class CommentSerializerTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create(username='user')
+        self.post = Post.objects.create(slug='post', title='title')
+        self.comment_1 = Comment.objects.create(owner=self.user, slug='1', post=self.post, text='text', created_at='2023-10-04T15:02:00Z')
+
+    def test_ok(self):
+        data = CommentSerializer(self.comment_1).data
+        expected_data = [
+            {
+                'owner': self.comment_1.owner,
+                'slug': '1',
+                'post': self.comment_1.post,
+                'text': 'text',
+                'created_at': '2023-10-04T15:02:00Z',
+            }
         ]
