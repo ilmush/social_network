@@ -7,6 +7,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = '__all__'
+        # fields = ('posts', 'description', 'followers')
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -19,7 +20,6 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = '__all__'
-        # fields = ('owner', 'post', 'created_at', 'likes')
 
 
 class FollowSerializer(serializers.ModelSerializer):
