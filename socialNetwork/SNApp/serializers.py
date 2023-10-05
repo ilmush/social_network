@@ -1,13 +1,12 @@
 from rest_framework import serializers
 
-from SNApp.models import Profile, Post, Comment, Follow, UserPostRelation
+from SNApp.models import Profile, Post, Comment, Follow, UserPostRelation, UserCommentRelation
 
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = '__all__'
-        # fields = ('posts', 'description', 'followers')
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -33,3 +32,8 @@ class UserPostRelationSerializer(serializers.ModelSerializer):
         model = UserPostRelation
         fields = '__all__'
 
+
+class UserCommentRelationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserCommentRelation
+        fields = '__all__'

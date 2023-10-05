@@ -4,18 +4,18 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
-from SNApp.models import Profile, Post, Comment, Follow, UserPostRelation
+from SNApp.models import Profile, Post, Comment, Follow, UserPostRelation, UserCommentRelation
 from SNApp.permissions import IsOwnerOrReadOnly
 from SNApp.serializers import ProfileSerializer, PostSerializer, CommentSerializer, FollowSerializer, \
-    UserPostRelationSerializer
+    UserPostRelationSerializer, UserCommentRelationSerializer
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
     lookup_field = 'slug'
-    # filter_backends = [DjangoFilterBackend]
-    # filter_fields = ['name']
+    filter_backends = [DjangoFilterBackend]
+    filter_fields = ['name']
 
     def perform_create(self, serializer):
         serializer.validated_data['user'] = self.request.user
@@ -44,9 +44,9 @@ class CommentViewSet(viewsets.ModelViewSet):
     filter_backends = [OrderingFilter]
     ordering_fields = ['likes']
 
-    # def perform_create(self, serializer):
-    #     serializer.validated_data['owner'] = self.request.user
-    #     serializer.save()
+    def perform_create(self, serializer):
+        serializer.validated_data['owner'] = self.request.user
+        serializer.save()
 
 
 class FollowViewSet(ReadOnlyModelViewSet):
@@ -58,3 +58,7 @@ class UserPostRelationViewSet(ReadOnlyModelViewSet):
     queryset = UserPostRelation.objects.all()
     serializer_class = UserPostRelationSerializer
 
+
+class UserCommentRelationViewSet(ReadOnlyModelViewSet):
+    queryset = UserCommentRelation.objects.all()
+    serializer_class = UserCommentRelationSerializer

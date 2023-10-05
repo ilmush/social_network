@@ -28,6 +28,9 @@ router = routers.SimpleRouter()
 router.register(r'posts', PostViewSet)
 router.register(r'profiles', ProfileViewSet)
 router.register(r'comments', CommentViewSet)
+router.register(r'follows', FollowViewSet)
+router.register(r'user_post_relations', UserPostRelationViewSet)
+router.register(r'user_comment_relations', UserCommentRelationViewSet)
 
 
 urlpatterns = [

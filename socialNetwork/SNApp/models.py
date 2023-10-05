@@ -45,7 +45,7 @@ class Post(models.Model):
 class Follow(models.Model):
     follower = models.ForeignKey(AuthUser, related_name='following_set', on_delete=models.CASCADE)
     following = models.ForeignKey(AuthUser, related_name='follower_set', on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_created=True)
 
     def __str__(self):
         return f'{self.follower} подписан на {self.following}'
