@@ -38,8 +38,15 @@ class ProfileSerializerTestCase(TestCase):
 class PostSerializerTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.create(username='user')
+        self.user2 = User.objects.create(username='user2')
+
         self.post_1 = Post.objects.create(owner=self.user, slug='post1', title='title1', description='test')
         self.post_2 = Post.objects.create(owner=self.user, slug='post2', title='title2', description='test')
+
+        UserPostRelation.objects.create(user=self.user, post=self.post_1, like=True)
+        UserPostRelation.objects.create(user=self.user2, post=self.post_1, like=True)
+
+        UserPostRelation.objects.create(user=self.user, post=self.post_2, like=True)
 
     def test_ok(self):
         data = PostSerializer([self.post_1, self.post_2], many=True).data
@@ -51,8 +58,9 @@ class PostSerializerTestCase(TestCase):
                 'description': 'test',
                 'image': None,
                 'owner': self.user.id,
-                'views': [],
+                # 'views': [],
                 'comments': [],
+                'likes_count': 2
             },
             {
                 'id': self.post_2.id,
@@ -61,8 +69,9 @@ class PostSerializerTestCase(TestCase):
                 'description': 'test',
                 'image': None,
                 'owner': self.user.id,
-                'views': [],
+                # 'views': [],
                 'comments': [],
+                'likes_count': 1
             },
         ]
         self.assertEqual(expected_data, data)
@@ -71,11 +80,17 @@ class PostSerializerTestCase(TestCase):
 class CommentSerializerTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.create(username='user')
+        self.user2 = User.objects.create(username='user2')
         self.post = Post.objects.create(slug='post', title='title')
         self.comment_1 = Comment.objects.create(owner=self.user, slug='1', post=self.post, text='text',
                                                 created_at='2023-10-04T15:02:00Z')
         self.comment_2 = Comment.objects.create(owner=self.user, slug='2', post=self.post, text='text',
                                                 created_at='2023-10-04T15:02:00Z')
+
+        UserCommentRelation.objects.create(user=self.user, comment=self.comment_1, like=True)
+        UserCommentRelation.objects.create(user=self.user2, comment=self.comment_1, like=True)
+
+        UserCommentRelation.objects.create(user=self.user, comment=self.comment_2, like=True)
 
     def test_ok(self):
         data = CommentSerializer([self.comment_1, self.comment_2], many=True).data
@@ -87,7 +102,8 @@ class CommentSerializerTestCase(TestCase):
                 'text': 'text',
                 'owner': self.user.id,
                 'post': self.post.id,
-                'likes': []
+                # 'likes': [],
+                'likes_count': 2,
             },
             {
                 'id': self.comment_2.id,
@@ -96,8 +112,9 @@ class CommentSerializerTestCase(TestCase):
                 'text': 'text',
                 'owner': self.user.id,
                 'post': self.post.id,
-                'likes': []
-            }
+                # 'likes': [],
+                'likes_count': 1,
+            },
         ]
         self.assertEqual(expected_data, data)
 
@@ -129,7 +146,6 @@ class UserPostRelationSerializerTestCase(TestCase):
     def test_ok(self):
         data = UserPostRelationSerializer(self.relation).data
         expected_data = {
-            'id': self.relation.id,
             'like': False,
             'in_notes': False,
             'user': self.user.id,
@@ -149,7 +165,6 @@ class UserCommentRelationSerializerTestCase(TestCase):
     def test_ok(self):
         data = UserCommentRelationSerializer(self.relation).data
         expected_data = {
-            'id': self.relation.id,
             'like': True,
             'user': self.user.id,
             'comment': self.comment.id

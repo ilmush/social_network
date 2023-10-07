@@ -10,15 +10,26 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
+    likes_count = serializers.SerializerMethodField()
+
     class Meta:
         model = Post
-        fields = '__all__'
+        fields = ('id', 'slug', 'title', 'description', 'image', 'owner', 'comments', 'likes_count')
+        # fields = '__all__'
+
+    def get_likes_count(self, instance):
+        return UserPostRelation.objects.filter(post=instance, like=True).count()
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    likes_count = serializers.SerializerMethodField()
+
     class Meta:
         model = Comment
-        fields = '__all__'
+        fields = ('id', 'owner', 'slug', 'post', 'text', 'created_at', 'likes_count')
+
+    def get_likes_count(self, instance):
+        return UserCommentRelation.objects.filter(comment=instance, like=True).count()
 
 
 class FollowSerializer(serializers.ModelSerializer):
