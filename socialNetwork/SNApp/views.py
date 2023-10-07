@@ -1,8 +1,9 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.filters import OrderingFilter
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.mixins import UpdateModelMixin
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.viewsets import ReadOnlyModelViewSet, GenericViewSet
 
 from SNApp.models import Profile, Post, Comment, Follow, UserPostRelation, UserCommentRelation
 from SNApp.permissions import IsOwnerOrReadOnly
@@ -26,7 +27,7 @@ class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     lookup_field = 'slug'
-    permission_classes = [IsAuthenticatedOrReadOnly, ]
+    permission_classes = [IsOwnerOrReadOnly, ]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filter_fields = ['title']
     ordering_fields = ['views', 'comments']
@@ -40,7 +41,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     lookup_field = 'slug'
-    # permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsOwnerOrReadOnly]
     filter_backends = [OrderingFilter]
     ordering_fields = ['likes']
 
@@ -49,16 +50,31 @@ class CommentViewSet(viewsets.ModelViewSet):
         serializer.save()
 
 
-class FollowViewSet(ReadOnlyModelViewSet):
+class FollowViewSet(UpdateModelMixin, GenericViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Follow.objects.all()
     serializer_class = FollowSerializer
 
 
-class UserPostRelationViewSet(ReadOnlyModelViewSet):
+class UserPostRelationViewSet(UpdateModelMixin, GenericViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = UserPostRelation.objects.all()
     serializer_class = UserPostRelationSerializer
+    lookup_field = 'user'
+
+    def get_object(self):
+        obj, _ = UserPostRelation.objects.get_or_create(user=self.request.user,
+                                                        post_id=self.kwargs['user'])
+        return obj
 
 
-class UserCommentRelationViewSet(ReadOnlyModelViewSet):
+class UserCommentRelationViewSet(UpdateModelMixin, GenericViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = UserCommentRelation.objects.all()
     serializer_class = UserCommentRelationSerializer
+    lookup_field = 'user'
+
+    def get_object(self):
+        obj, _ = UserCommentRelation.objects.get_or_create(user=self.request.user,
+                                                           comment_id=self.kwargs['user'])
+        return obj

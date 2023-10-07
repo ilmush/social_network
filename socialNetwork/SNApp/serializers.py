@@ -30,10 +30,10 @@ class FollowSerializer(serializers.ModelSerializer):
 class UserPostRelationSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserPostRelation
-        fields = '__all__'
+        fields = ('user', 'post', 'like', 'in_notes')
 
 
 class UserCommentRelationSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserCommentRelation
-        fields = '__all__'
+        fields = ('user', 'comment', 'like')
