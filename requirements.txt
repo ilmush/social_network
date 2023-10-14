@@ -6,3 +6,5 @@ flower==1.2.0
 Pillow
 django-filter
 djangorestframework-simplejwt
+django-redis
+django-cachalot
